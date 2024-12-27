@@ -11,11 +11,11 @@ const app = express();
 app.use(express.json());
 app.use(helmet());
 
-mongoose.connection.on("open", ()=>{
+mongoose.connection.on("open", () => {
     console.log(chalk.green.bgWhite("MongoDB is Connected"));
 })
 
-mongoose.connection.on("error", (error)=>{
+mongoose.connection.on("error", (error) => {
     console.log("MongoDB is not Connected", error.message);
 })
 

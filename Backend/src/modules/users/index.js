@@ -6,7 +6,7 @@ import AddUsers from "./controllers/post.js";
 
 const userRoutes = Router()
 
-userRoutes.get('/', getUsers)
 userRoutes.post('/', AddUsers)
+userRoutes.get('/', getUsers)
 
 export default userRoutes;
