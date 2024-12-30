@@ -1,5 +1,34 @@
+import axios from "axios";
+import { useContext, useState } from "react";
+import { APP_ROUTES } from "../../constant/AppRoutes";
+// import { AuthContext } from "../../context/AuthContext";
 
 function Login() {
+
+    const [loading, setLoading] = useState(false);
+    // const { user, setUSer } = useContext(AuthContext);
+
+    const handleLogin = async (e) => {
+        try {
+            e.preventDefault();
+            setLoading(true)
+            const obj = {
+                email: e.target[0].value,
+                password: e.target[1].value,
+            }
+            const loginUser = await axios.post(APP_ROUTES.login, obj);
+            console.log("loginUser", loginUser)
+
+            setLoading(false)
+            console.log("object", obj);
+        } catch (error) {
+            console.log("error", error);
+            
+
+        }
+
+    }
+
     return (
         <section className="bg-gray-50 dark:bg-gray-900">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -19,7 +48,7 @@ function Login() {
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Sign in to your account
                         </h1>
-                        <form className="space-y-4 md:space-y-6" action="#">
+                        <form className="space-y-4 md:space-y-6" onSubmit={handleLogin} action="#">
                             <div>
                                 <label
                                     htmlFor="email"
@@ -81,7 +110,7 @@ function Login() {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                className="w-full text-white bg-gray-800 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                             >
                                 Sign in
                             </button>
