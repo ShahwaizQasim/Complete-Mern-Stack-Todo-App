@@ -3,11 +3,12 @@ import { useContext, useState } from "react";
 import { APP_ROUTES } from "../../constant/AppRoutes";
 import { AuthContext } from "../../context/AuthContext"
 import Cookies from 'js-cookie';
+import { Link, useNavigate } from "react-router";
 
 function Login() {
 
     const [loading, setLoading] = useState(false);
-    const { setUser } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         try {
@@ -18,10 +19,12 @@ function Login() {
                 password: e.target[1].value,
             }
             const loginUser = await axios.post(APP_ROUTES.login, obj);
-            Cookies.set('token', loginUser?.data?.token)
-            setUser(loginUser?.data?.data)
+            if (loginUser) {
+                navigate('/');
+            } else {
+                navigate('/signIn')
+            }
             setLoading(false)
-            console.log("object", obj);
         } catch (error) {
             console.log("error", error);
             setLoading(false)
@@ -106,12 +109,12 @@ function Login() {
                             </button>
                             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                 Don’t have an account yet?{" "}
-                                <a
-                                    href="#"
+                                <Link
+                                    to="/signUp"
                                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                                 >
                                     Sign up
-                                </a>
+                                </Link>
                             </p>
                         </form>
                     </div>

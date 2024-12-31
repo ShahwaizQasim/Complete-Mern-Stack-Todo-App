@@ -1,7 +1,8 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { APP_ROUTES } from "../../constant/AppRoutes";
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { AuthContext } from "../../context/AuthContext";
 
 function Signup() {
@@ -23,7 +24,8 @@ function Signup() {
             console.log("object", obj);
             const userRegister = await axios.post(APP_ROUTES.signUp, obj);
             console.log(userRegister);
-            
+            Cookies.set('token', userRegister?.data?.token);
+            setUser(userRegister?.data?.user)
             navigate('/signIn')
             setLoading(false);
         } catch (error) {
@@ -135,12 +137,12 @@ function Signup() {
                             </button>
                             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                 Already have an account?{" "}
-                                <a
-                                    href="#"
+                                <Link
+                                    to="/signIn"
                                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                                 >
                                     Login here
-                                </a>
+                                </Link>
                             </p>
                         </form>
                     </div>
