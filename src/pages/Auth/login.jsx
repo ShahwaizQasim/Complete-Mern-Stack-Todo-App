@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useContext, useState } from "react";
 import { APP_ROUTES } from "../../constant/AppRoutes";
-// import { AuthContext } from "../../context/AuthContext";
+import AuthContext from "../../context/AuthContext"
 
 function Login() {
 
     const [loading, setLoading] = useState(false);
-    // const { user, setUSer } = useContext(AuthContext);
+    const {setUser} = useContext(AuthContext);
 
     const handleLogin = async (e) => {
         try {
@@ -17,13 +17,12 @@ function Login() {
                 password: e.target[1].value,
             }
             const loginUser = await axios.post(APP_ROUTES.login, obj);
-            console.log("loginUser", loginUser)
-
+            console.log("loginUser", loginUser?.data.data)
             setLoading(false)
             console.log("object", obj);
         } catch (error) {
             console.log("error", error);
-            
+
 
         }
 
@@ -109,10 +108,11 @@ function Login() {
                                 </a>
                             </div>
                             <button
+                                disabled={loading}
                                 type="submit"
                                 className="w-full text-white bg-gray-800 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                             >
-                                Sign in
+                                {loading ? 'Loading...' : 'Sign in'}
                             </button>
                             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                                 Don’t have an account yet?{" "}
