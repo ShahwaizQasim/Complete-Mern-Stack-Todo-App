@@ -1,12 +1,13 @@
 import axios from "axios";
 import { useContext, useState } from "react";
 import { APP_ROUTES } from "../../constant/AppRoutes";
-import AuthContext from "../../context/AuthContext"
+import { AuthContext } from "../../context/AuthContext"
+import Cookies from 'js-cookie';
 
 function Login() {
 
     const [loading, setLoading] = useState(false);
-    const {setUser} = useContext(AuthContext);
+    const { setUser } = useContext(AuthContext);
 
     const handleLogin = async (e) => {
         try {
@@ -17,13 +18,13 @@ function Login() {
                 password: e.target[1].value,
             }
             const loginUser = await axios.post(APP_ROUTES.login, obj);
-            console.log("loginUser", loginUser?.data.data)
+            Cookies.set('token', loginUser?.data?.token)
+            setUser(loginUser?.data?.data)
             setLoading(false)
             console.log("object", obj);
         } catch (error) {
             console.log("error", error);
-
-
+            setLoading(false)
         }
 
     }
