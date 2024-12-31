@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router";
 function Login() {
 
     const [loading, setLoading] = useState(false);
+    const { setUser } = useContext(AuthContext)
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
@@ -19,12 +20,11 @@ function Login() {
                 password: e.target[1].value,
             }
             const loginUser = await axios.post(APP_ROUTES.login, obj);
-            if (loginUser) {
-                navigate('/');
-            } else {
-                navigate('/signIn')
-            }
+            Cookies.set('token', loginUser?.data?.token)
+            setUser(loginUser?.data?.data)
             setLoading(false)
+            console.log(loginUser?.data?.data);
+
         } catch (error) {
             console.log("error", error);
             setLoading(false)

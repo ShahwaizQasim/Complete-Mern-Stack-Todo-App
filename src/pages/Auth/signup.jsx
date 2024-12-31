@@ -1,14 +1,11 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { APP_ROUTES } from "../../constant/AppRoutes";
 import axios from "axios";
-import Cookies from 'js-cookie';
-import { AuthContext } from "../../context/AuthContext";
 
 function Signup() {
 
     const [loading, setLoading] = useState(false);
-    const { setUser } = useContext(AuthContext)
     const navigate = useNavigate();
 
     const handleSignUp = async (e) => {
@@ -23,10 +20,9 @@ function Signup() {
             }
             console.log("object", obj);
             const userRegister = await axios.post(APP_ROUTES.signUp, obj);
-            console.log(userRegister);
-            Cookies.set('token', userRegister?.data?.token);
-            setUser(userRegister?.data?.user)
-            navigate('/signIn')
+            if (userRegister) {
+                navigate('/signIn')
+            }
             setLoading(false);
         } catch (error) {
             console.log("Error", error);
