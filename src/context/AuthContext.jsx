@@ -31,9 +31,11 @@ export default function AuthContextProvider({ children }) {
             })
             setUser(user?.data?.user)
         } catch (error) {
-            console.log('error=>', error);
+            console.log('error in context=>', error);
         }
     }
+
+    console.log('user in context', user);
 
     return (
         <AuthContext.Provider value={{ user, setUser }}>

@@ -21,15 +21,7 @@ function App() {
       <Routes>
         <Route path='/signUp' element={<Signup />} />
         <Route path='/signIn' element={user ? <Navigate to={'/'} /> : <Login />} />
-        <Route element={
-          <>
-            <Navbar />
-            <Outlet />
-            <Footer />
-          </>
-        }>
-          <Route path='/' element={!user ? <Navigate to={'/signIn'} /> : <Home />} />
-        </Route>
+        <Route path='/' element={!user ? <Navigate to={'/signIn'} /> : <Home />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
 
