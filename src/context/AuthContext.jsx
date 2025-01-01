@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { createContext } from "react";
 import Cookies from "js-cookie";
 import { Navigate } from "react-router";
+import axios from "axios";
+import { APP_ROUTES } from "../constant/AppRoutes";
 
 export const AuthContext = createContext();
 
@@ -12,20 +14,24 @@ export default function AuthContextProvider({ children }) {
     useEffect(() => {
         if (!user) {
             const token = Cookies.get('token');
-            console.log(token);
             if (token) {
-                getUser();
+                getUser(token);
             } else {
                 <Navigate to={'signUp'} />
             }
         }
     }, [user])
 
-    const getUser = async () => {
+    const getUser = async (token) => {
         try {
-
+            const user = await axios.get(APP_ROUTES.userInfo, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setUser(user?.data?.user)
         } catch (error) {
-
+            console.log('error=>', error);
         }
     }
 

@@ -9,4 +9,5 @@ const BASE_URL = prod;
 export const APP_ROUTES = {
     signUp: `${BASE_URL}api/users/auth`,
     login: `${BASE_URL}api/users/auth/login`,
+    userInfo: `${BASE_URL}api/users/auth/UserInfo`,
 }

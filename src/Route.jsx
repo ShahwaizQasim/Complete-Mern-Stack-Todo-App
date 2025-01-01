@@ -13,7 +13,7 @@ import Footer from './components/footer';
 function App() {
 
   const { user } = useContext(AuthContext);
-  console.log("user", user);
+  console.log("user in routes", user);
 
 
   return (
