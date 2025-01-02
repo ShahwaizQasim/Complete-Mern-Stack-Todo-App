@@ -3,13 +3,12 @@ import { useContext, useState } from "react";
 import { APP_ROUTES } from "../../constant/AppRoutes";
 import { AuthContext } from "../../context/AuthContext"
 import Cookies from 'js-cookie';
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 
 function Login() {
 
     const [loading, setLoading] = useState(false);
     const { setUser } = useContext(AuthContext)
-    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         try {
