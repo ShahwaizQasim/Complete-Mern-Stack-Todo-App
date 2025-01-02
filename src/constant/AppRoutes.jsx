@@ -10,4 +10,6 @@ export const APP_ROUTES = {
     signUp: `${BASE_URL}api/users/auth`,
     login: `${BASE_URL}api/users/auth/login`,
     userInfo: `${BASE_URL}api/users/auth/UserInfo`,
+    AddCourse: `${BASE_URL}api/addCourse`,
+    GetCourse: `${BASE_URL}api/addCourse`
 }
