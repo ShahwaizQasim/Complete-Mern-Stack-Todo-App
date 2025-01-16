@@ -141,7 +141,7 @@ function CourseForm() {
             </form>
             <section className="text-gray-600 body-font relative top-40">
                 <div className="container px-5 py-24 mx-auto">
-                    <div className="flex flex-wrap -m-4">   
+                    <div className="flex flex-wrap -m-4">
                         {
                             courseForm?.course?.map((getCourse) => {
                                 console.log("Map Console", getCourse);
