@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { APP_ROUTES } from '../constant/AppRoutes';
+import { APP_ROUTES, BASE_URL } from '../constant/AppRoutes';
 import Cookies from 'js-cookie';
 import Card from './card';
 
@@ -9,25 +9,26 @@ function CourseForm() {
     const [courseForm, setCourseForm] = useState(null);
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => { getUser() }, [])
+    useEffect(() => { getCourse() }, [])
 
-    const getUser = async () => {
+    const getCourse = async () => {
         try {
-            const userGet = await axios.get(APP_ROUTES.GetCourse, {
+            setLoading(true)
+            const courseGet = await axios.get(APP_ROUTES.GetCourse, {
                 headers: {
                     Authorization: `Bearer ${Cookies.get('token')}`
                 }
             })
-            console.log('userGet=>', userGet.data);
-            setCourseForm(userGet.data)
+            setCourseForm(courseGet.data)
 
         } catch (error) {
             console.log("error=>", error);
-
+        } finally {
+            setLoading(false);
         }
     }
 
-    const handleCourseForm = async (e) => {
+    const handleAddCourse = async (e) => {
         try {
             e.preventDefault();
             setLoading(true)
@@ -40,8 +41,6 @@ function CourseForm() {
             if (!obj.courseName || !obj.duration || !obj.description || !obj.image) {
                 return alert("All fields are required");
             }
-            console.log("Course Object=>", obj);
-            console.log("API URL=>", APP_ROUTES.AddCourse);
 
             const addCourse = await axios.post(APP_ROUTES.AddCourse, obj, {
                 headers: {
@@ -49,12 +48,31 @@ function CourseForm() {
                 }
             });
             if (addCourse) {
-                console.log(addCourse?.data);
-                getUser();
+                getCourse();
             }
             setLoading(false);
         } catch (error) {
             console.log("error=>", error.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
+    const deleteTodo = async (id) => {
+        try {
+            setLoading(true)
+            const deleteTodo = await axios.delete(`${BASE_URL}api/addCourse/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${Cookies.get('token')}`
+                }
+            });
+            if (deleteTodo) {
+                getCourse();
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
             setLoading(false)
         }
     }
@@ -64,7 +82,7 @@ function CourseForm() {
 
     return (
         <>
-            <form className="max-w-md mx-auto relative top-40" onSubmit={handleCourseForm}>
+            <form className="max-w-md mx-auto relative top-40" onSubmit={handleAddCourse}>
                 <div className="relative z-0 w-full mb-5 group">
                     <input
                         type="text"
@@ -143,10 +161,11 @@ function CourseForm() {
                 <div className="container px-5 py-24 mx-auto">
                     <div className="flex flex-wrap -m-4">
                         {
-                            courseForm?.course?.map((getCourse) => {
-                                console.log("Map Console", getCourse);
-                                return <Card courses={getCourse} />
-                            })
+                            loading ? "loading..." :
+                                courseForm?.course?.map((getCourse) => {
+                                    console.log("Map Console", getCourse);
+                                    return <Card courses={getCourse} onClick={() => deleteTodo(getCourse._id)} />
+                                })
                         }
                     </div>
                 </div>
