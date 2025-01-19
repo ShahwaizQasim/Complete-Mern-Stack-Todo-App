@@ -7,6 +7,7 @@ import Card from './card';
 function CourseForm() {
 
     const [courseForm, setCourseForm] = useState(null);
+    const [EditCourse, setEditCourse] = useState(null);
     const [loading, setLoading] = useState(false)
 
     useEffect(() => { getCourse() }, [])
@@ -29,8 +30,8 @@ function CourseForm() {
     }
 
     const handleAddCourse = async (e) => {
+        e.preventDefault();
         try {
-            e.preventDefault();
             setLoading(true)
             const obj = {
                 courseName: e.target[0].value,
@@ -47,9 +48,7 @@ function CourseForm() {
                     Authorization: `Bearer ${Cookies.get('token')}`,
                 }
             });
-            if (addCourse) {
-                getCourse();
-            }
+            getCourse(); // referesh course
             setLoading(false);
         } catch (error) {
             console.log("error=>", error.message);
@@ -59,7 +58,8 @@ function CourseForm() {
     }
 
 
-    const deleteTodo = async (id) => {
+    const deleteTodo = async (id, e) => {
+        e.preventDefault();
         try {
             setLoading(true)
             const deleteTodo = await axios.delete(`${BASE_URL}api/addCourse/${id}`, {
@@ -67,9 +67,7 @@ function CourseForm() {
                     Authorization: `Bearer ${Cookies.get('token')}`
                 }
             });
-            if (deleteTodo) {
-                getCourse();
-            }
+            getCourse(); // referesh course
         } catch (error) {
             console.log(error);
         } finally {
@@ -77,23 +75,59 @@ function CourseForm() {
         }
     }
 
+    const handleUpdateCourse = async (e) => {
+        e.preventDefault();
+        try {
+            setLoading(true)
+            const updatedData = {
+                courseName: EditCourse.courseName,
+                duration: EditCourse.duration,
+                description: EditCourse.description,
+                image: EditCourse.description,
+            }
+            console.log("updatedData", updatedData);
+
+            const updateCourse = await axios.patch(`${BASE_URL}api/addCourse/${EditCourse?._id}`, updatedData, {
+                headers: {
+                    Authorization: `Bearer ${Cookies.get('token')}`
+                }
+            })
+            getCourse(); // referesh course
+        } catch (error) {
+            console.log(error);
+
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleEditClick = (getCourse) => {
+        console.log("Edit Course in", getCourse);
+
+        setEditCourse(course)
+    }
+
     console.log("CourseForm =>", courseForm);
+    console.log("EditCourse=>", EditCourse);
+
 
 
     return (
         <>
-            <form className="max-w-md mx-auto relative top-40" onSubmit={handleAddCourse}>
+            <form className="max-w-md mx-auto relative top-40" onSubmit={EditCourse ? handleUpdateCourse : handleAddCourse}>
                 <div className="relative z-0 w-full mb-5 group">
                     <input
                         type="text"
-                        name=" CourseName"
-                        id=" CourseName"
+                        name=" courseName"
+                        id=" courseName"
+                        value={EditCourse?.courseName || ""}
+                        onChange={(e) => setEditCourse({ ...EditCourse, courseName: e.target.value })}
                         className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                         placeholder=" "
                         required=""
                     />
                     <label
-                        htmlFor=" CourseName"
+                        htmlFor=" courseName"
                         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                     >
                         Course Name
@@ -104,6 +138,8 @@ function CourseForm() {
                         type="text"
                         name="duration"
                         id="duration"
+                        value={EditCourse?.duration || ""}
+                        onChange={(e) => setEditCourse({ ...EditCourse, duration: e.target.value })}
                         className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                         placeholder=" "
                         required=""
@@ -120,6 +156,8 @@ function CourseForm() {
                         type="text"
                         name="description"
                         id="description"
+                        value={EditCourse?.description || ""}
+                        onChange={(e) => setEditCourse({ ...EditCourse, description: e.target.value })}
                         className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                         placeholder=" "
                         required=""
@@ -134,14 +172,16 @@ function CourseForm() {
                 <div className="relative z-0 w-full mb-5 group">
                     <input
                         type="url"
-                        name="imageUrl"
-                        id="imageUrl"
+                        name="image"
+                        id="image"
+                        value={EditCourse?.image || ""}
+                        onChange={(e) => setEditCourse({ ...EditCourse, image: e.target.value })}
                         className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                         placeholder=" "
                         required=""
                     />
                     <label
-                        htmlFor="imageUrl"
+                        htmlFor="image"
                         className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                     >
                         Image Url
@@ -163,17 +203,15 @@ function CourseForm() {
                         {
                             loading ? "loading..." :
                                 courseForm?.course?.map((getCourse) => {
-                                    console.log("Map Console", getCourse);
-                                    return <Card courses={getCourse} onClick={() => deleteTodo(getCourse._id)} />
+                                    return <Card courses={getCourse}
+                                        onClickDelete={() => deleteTodo(getCourse._id)}
+                                        onClickEdit={() => handleEditClick(getCourse)} />
                                 })
                         }
                     </div>
                 </div>
             </section>
-
         </>
-
-
     )
 }
 

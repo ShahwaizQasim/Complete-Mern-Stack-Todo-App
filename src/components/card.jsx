@@ -1,6 +1,6 @@
 import React from 'react'
 
-function Card({ courses, onClick }) {
+function Card({ courses, onClickEdit, onClickDelete }) {
 
     const { courseName, duration, description, image } = courses;
 
@@ -38,11 +38,11 @@ function Card({ courses, onClick }) {
                                 <path d="M12 5l7 7-7 7" />
                             </svg>
                         </a>
-                        <span className="text-gray-800 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
-                            <img src="" alt="" />
+                        <button onClick={onClickEdit} className="text-gray-800 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto
+                         leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
                             Edit
-                        </span>
-                        <button className="text-gray-800 inline-flex items-center leading-none text-sm" onClick={onClick}>
+                        </button>
+                        <button className="text-gray-800 inline-flex items-center leading-none text-sm" onClick={onClickDelete}>
                             Delete
                         </button>
                     </div>
