@@ -8,6 +8,7 @@ function CourseForm() {
 
     const [courseForm, setCourseForm] = useState(null);
     const [EditCourse, setEditCourse] = useState(null);
+    const [isEdited, setIsEdit] = useState(false);
     const [loading, setLoading] = useState(false)
 
     useEffect(() => { getCourse() }, [])
@@ -39,17 +40,39 @@ function CourseForm() {
                 description: e.target[2].value,
                 image: e.target[3].value,
             }
+            console.log('obj', obj);
+
             if (!obj.courseName || !obj.duration || !obj.description || !obj.image) {
                 return alert("All fields are required");
             }
 
-            const addCourse = await axios.post(APP_ROUTES.AddCourse, obj, {
-                headers: {
-                    Authorization: `Bearer ${Cookies.get('token')}`,
+            console.log("EditCourse Id", EditCourse?._id);
+
+
+            if (isEdited) {
+                const updatedObj = {
+                    courseName: EditCourse.courseName,
+                    duration: EditCourse.duration,
+                    description: EditCourse.description,
+                    image: EditCourse.image,
                 }
-            });
+                const updateCourse = await axios.put(`${BASE_URL}api/addCourse/${EditCourse?._id}`, updatedObj, {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get('token')}`
+                    }
+                })
+
+            } else {
+                const addCourse = await axios.post(APP_ROUTES.AddCourse, obj, {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get('token')}`,
+                    }
+                });
+            }
             getCourse(); // referesh course
-            setLoading(false);
+            setEditCourse(null)
+            setIsEdit(false);
+            e.target.reset();
         } catch (error) {
             console.log("error=>", error.message);
         } finally {
@@ -58,8 +81,7 @@ function CourseForm() {
     }
 
 
-    const deleteTodo = async (id, e) => {
-        e.preventDefault();
+    const deleteTodo = async (id) => {
         try {
             setLoading(true)
             const deleteTodo = await axios.delete(`${BASE_URL}api/addCourse/${id}`, {
@@ -75,46 +97,19 @@ function CourseForm() {
         }
     }
 
-    const handleUpdateCourse = async (e) => {
-        e.preventDefault();
-        try {
-            setLoading(true)
-            const updatedData = {
-                courseName: EditCourse.courseName,
-                duration: EditCourse.duration,
-                description: EditCourse.description,
-                image: EditCourse.description,
-            }
-            console.log("updatedData", updatedData);
-
-            const updateCourse = await axios.patch(`${BASE_URL}api/addCourse/${EditCourse?._id}`, updatedData, {
-                headers: {
-                    Authorization: `Bearer ${Cookies.get('token')}`
-                }
-            })
-            getCourse(); // referesh course
-        } catch (error) {
-            console.log(error);
-
-        } finally {
-            setLoading(false)
-        }
-    }
-
     const handleEditClick = (getCourse) => {
-        console.log("Edit Course in", getCourse);
-
-        setEditCourse(course)
+        setEditCourse(getCourse)
+        setIsEdit(true)
     }
 
-    console.log("CourseForm =>", courseForm);
     console.log("EditCourse=>", EditCourse);
+    console.log("CourseForm =>", courseForm);
 
 
 
     return (
         <>
-            <form className="max-w-md mx-auto relative top-40" onSubmit={EditCourse ? handleUpdateCourse : handleAddCourse}>
+            <form className="max-w-md mx-auto relative top-40" onSubmit={handleAddCourse}>
                 <div className="relative z-0 w-full mb-5 group">
                     <input
                         type="text"
@@ -193,7 +188,7 @@ function CourseForm() {
                         type="submit"
                         className="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                     >
-                        {loading ? "Loading..." : "Add Course"}
+                        {loading ? "Loading..." : isEdited ? "Update Course" : "Add Course"}
                     </button>
                 </center>
             </form>
@@ -201,9 +196,10 @@ function CourseForm() {
                 <div className="container px-5 py-24 mx-auto">
                     <div className="flex flex-wrap -m-4">
                         {
-                            loading ? "loading..." :
+                            loading ? <div className='flex justify-center items-center'>loading...</div> :
                                 courseForm?.course?.map((getCourse) => {
-                                    return <Card courses={getCourse}
+                                    return <Card key={getCourse?._id}
+                                        courses={getCourse}
                                         onClickDelete={() => deleteTodo(getCourse._id)}
                                         onClickEdit={() => handleEditClick(getCourse)} />
                                 })
